@@ -1,0 +1,23 @@
+#top {
+	vertical-layout: top
+	margin-top: 10
+}
+
+#bottom {
+	vertical-layout: bottom
+	margin-bottom: 10
+}
+
+.verticalStack {
+	stack-spacing: 10
+}
+
+.innerStack {
+	orientation: horizontal
+    stack-spacing: 5
+}
+
+label {
+	text-color: #404040
+	text-horizontal-layout: center
+}
