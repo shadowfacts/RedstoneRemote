@@ -13,7 +13,7 @@ import java.util.*
  */
 class PacketUpdateRemote(var player: UUID?, var hand: EnumHand?, var tag: NBTTagCompound?): IMessage {
 
-	constructor(player: EntityPlayer, hand: EnumHand): this(player.uniqueID, hand, player.getHeldItem(hand).tagCompound ?: NBTTagCompound())
+	constructor(player: EntityPlayer, hand: EnumHand): this(player.uniqueID, hand, player.getHeldItem(hand)!!.tagCompound)
 
 	constructor(): this(null, null, null)
 

@@ -35,33 +35,32 @@ class ItemRemote: ItemBase("remote") {
 		return !oldStack.isItemEqual(newStack) || slotChanged
 	}
 
-	override fun onItemRightClick(world: World, player: EntityPlayer, hand: EnumHand): ActionResult<ItemStack> {
+	override fun onItemRightClick(stack: ItemStack, world: World, player: EntityPlayer, hand: EnumHand): ActionResult<ItemStack> {
 		val result = player.rayTrace(16.0)
 		if (result != null) {
 			if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
 				val pos = result.blockPos.offset(result.sideHit)
 				val state = world.getBlockState(pos)
 				if (state.block is BlockAir) {
-					val stack = player.getHeldItem(hand)
 					BlockSignalProvider.create(world, pos, stack.getStrength(), stack.getDuration() * 20)
 				}
 			} else {
 				if (world.isRemote) {
-					openGUI(player, hand)
+					openGUI(stack, player, hand)
 				}
 			}
 			player.swingArm(hand)
-			return ActionResult(EnumActionResult.SUCCESS, player.getHeldItem(hand))
+			return ActionResult(EnumActionResult.SUCCESS, stack)
 		}
-		return ActionResult(EnumActionResult.FAIL, player.getHeldItem(hand))
+		return ActionResult(EnumActionResult.FAIL, stack)
 	}
 
 	@SideOnly(Side.CLIENT)
-	private fun openGUI(player: EntityPlayer, hand: EnumHand) {
+	private fun openGUI(stack: ItemStack, player: EntityPlayer, hand: EnumHand) {
 		val synchronizer = {
 			RedstoneRemote.network!!.sendToServer(PacketUpdateRemote(player, hand))
 		}
-		Minecraft.getMinecraft().displayGuiScreen(GUIRemote.create(player.getHeldItem(hand), synchronizer))
+		Minecraft.getMinecraft().displayGuiScreen(GUIRemote.create(stack, synchronizer))
 	}
 
 }

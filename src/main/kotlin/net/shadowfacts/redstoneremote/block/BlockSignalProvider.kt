@@ -23,7 +23,7 @@ class BlockSignalProvider: BlockAir() {
 
 		fun create(world: World, pos: BlockPos, power: Int, duration: Int) {
 			world.setBlockState(pos, RedstoneRemote.signalProvider.defaultState.withProperty(POWER, power))
-			world.notifyNeighborsOfStateChange(pos, RedstoneRemote.signalProvider, false)
+			world.notifyNeighborsOfStateChange(pos, RedstoneRemote.signalProvider)
 			(world.getTileEntity(pos) as TileEntitySignalProvider).duration = duration
 		}
 	}

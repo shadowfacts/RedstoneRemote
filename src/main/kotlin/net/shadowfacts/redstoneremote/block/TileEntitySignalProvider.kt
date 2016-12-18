@@ -16,7 +16,7 @@ class TileEntitySignalProvider: BaseTileEntity(), ITickable {
 		duration--
 		if (duration == 0) {
 			BlockSignalProvider.create(world, pos, 0, 0)
-			world.notifyNeighborsOfStateChange(pos, RedstoneRemote.signalProvider, false)
+			world.notifyNeighborsOfStateChange(pos, RedstoneRemote.signalProvider)
 			world.setBlockToAir(pos)
 		}
 	}
