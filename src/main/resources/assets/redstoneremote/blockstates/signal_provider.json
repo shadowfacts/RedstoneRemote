@@ -1,7 +1,20 @@
 {
+	"forge_marker": 1,
+	"defaults": {
+		"model": "redstoneremote:signal_provider"
+	},
 	"variants": {
-		"normal": {
-			"model": "redstoneremote:signal_provider"
+		"specific_side": {
+			"false": {},
+			"true": {}
+		},
+		"side": {
+			"down": {},
+			"up": {},
+			"north": {},
+			"south": {},
+			"west": {},
+			"east": {}
 		}
 	}
 }
