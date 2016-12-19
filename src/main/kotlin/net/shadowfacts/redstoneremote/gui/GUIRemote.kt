@@ -4,10 +4,7 @@ import net.minecraft.client.gui.GuiScreen
 import net.minecraft.item.ItemStack
 import net.minecraft.util.ResourceLocation
 import net.shadowfacts.redstoneremote.MOD_ID
-import net.shadowfacts.redstoneremote.util.getDuration
-import net.shadowfacts.redstoneremote.util.getStrength
-import net.shadowfacts.redstoneremote.util.setDuration
-import net.shadowfacts.redstoneremote.util.setStrength
+import net.shadowfacts.redstoneremote.util.*
 import net.shadowfacts.shadowmc.ui.dsl.*
 import net.shadowfacts.shadowmc.ui.element.UILabel
 import net.shadowfacts.shadowmc.util.KeyboardHelper
@@ -36,7 +33,7 @@ object GUIRemote {
 				fixed {
 					id = "top"
 					width = 146
-					height = 90
+					height = 60
 
 					stack {
 						id = "topStack"
@@ -91,12 +88,12 @@ object GUIRemote {
 				}
 
 				fixed {
-					id = "bottom"
+					id = "center"
 					width = 146
-					height = 90
+					height = 60
 
 					stack {
-						id = "bottomStack"
+						id = "centerStack"
 						addClass("verticalStack")
 
 						label {
@@ -126,7 +123,7 @@ object GUIRemote {
 
 							duration = label {
 								id = "duration"
-								text = remote.getDuration().toString()
+								text = remote.getDuration().toString() + "s"
 								width = 20
 							}
 
@@ -142,6 +139,30 @@ object GUIRemote {
 										false
 									}
 								}
+							}
+						}
+					}
+				}
+
+				fixed {
+					id = "bottom"
+					width = 146
+					height = 60
+
+					stack {
+						id = "bottomStack"
+						addClass("verticalStack")
+
+						label {
+							id = "specificSideLabel"
+							text = "Use Specific Side"
+						}
+
+						buttonToggle {
+							id = "specificSide"
+							state = remote.useSpecificSide()
+							handler = {
+								remote.setSpecificSide(it.state)
 							}
 						}
 					}
