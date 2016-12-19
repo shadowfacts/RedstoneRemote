@@ -1,6 +1,8 @@
 package net.shadowfacts.redstoneremote.block
 
 import net.minecraft.block.BlockAir
+import net.minecraft.block.properties.PropertyBool
+import net.minecraft.block.properties.PropertyDirection
 import net.minecraft.block.properties.PropertyInteger
 import net.minecraft.block.state.BlockStateContainer
 import net.minecraft.block.state.IBlockState
@@ -19,12 +21,15 @@ import java.util.*
 class BlockSignalProvider: BlockAir() {
 
 	companion object {
-		val POWER: PropertyInteger = PropertyInteger.create("power", 0, 15)
+		val SPECIFIC_SIDE: PropertyBool = PropertyBool.create("specific_side")
+		val SIDE: PropertyDirection = PropertyDirection.create("side")
 
-		fun create(world: World, pos: BlockPos, power: Int, duration: Int) {
-			world.setBlockState(pos, RedstoneRemote.signalProvider.defaultState.withProperty(POWER, power))
+		fun create(world: World, pos: BlockPos, power: Int, duration: Int, specificSide: Boolean, side: EnumFacing) {
+			world.setBlockState(pos, RedstoneRemote.signalProvider.defaultState.withProperty(SPECIFIC_SIDE, specificSide).withProperty(SIDE, side))
+			val tile = (world.getTileEntity(pos) as TileEntitySignalProvider)
+			tile.duration = duration
+			tile.power = power
 			world.notifyNeighborsOfStateChange(pos, RedstoneRemote.signalProvider)
-			(world.getTileEntity(pos) as TileEntitySignalProvider).duration = duration
 		}
 	}
 
@@ -34,16 +39,22 @@ class BlockSignalProvider: BlockAir() {
 	}
 
 	override fun createBlockState(): BlockStateContainer {
-		return BlockStateContainer(this, POWER)
+		return BlockStateContainer(this, SPECIFIC_SIDE, SIDE)
 	}
 
 	override fun getMetaFromState(state: IBlockState): Int {
-		return state.getValue(POWER)
+		var meta = state.getValue(SIDE).ordinal
+		if (state.getValue(SPECIFIC_SIDE)) {
+			meta = meta.or(0b1000)
+		}
+		return meta
 	}
 
 	@Deprecated("")
 	override fun getStateFromMeta(meta: Int): IBlockState {
-		return defaultState.withProperty(POWER, meta)
+		val specificSide = meta.shr(3)
+		val side = meta.and(0b0111)
+		return defaultState.withProperty(SPECIFIC_SIDE, specificSide == 1).withProperty(SIDE, EnumFacing.VALUES[side])
 	}
 
 	override fun canConnectRedstone(state: IBlockState, world: IBlockAccess, pos: BlockPos, side: EnumFacing?): Boolean {
@@ -56,8 +67,11 @@ class BlockSignalProvider: BlockAir() {
 	}
 
 	@Deprecated("")
-	override fun getWeakPower(state: IBlockState, blockAccess: IBlockAccess, pos: BlockPos, side: EnumFacing): Int {
-		return state.getValue(POWER)
+	override fun getWeakPower(state: IBlockState, world: IBlockAccess, pos: BlockPos, side: EnumFacing): Int {
+		if (!state.getValue(SPECIFIC_SIDE) || (state.getValue(SPECIFIC_SIDE) && state.getValue(SIDE) == side)) {
+			return (world.getTileEntity(pos) as TileEntitySignalProvider).power
+		}
+		return 0
 	}
 
 	override fun hasTileEntity(state: IBlockState): Boolean {

@@ -4,6 +4,7 @@ import net.minecraft.block.BlockAir
 import net.minecraft.client.Minecraft
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.util.ActionResult
 import net.minecraft.util.EnumActionResult
@@ -19,6 +20,8 @@ import net.shadowfacts.redstoneremote.gui.GUIRemote
 import net.shadowfacts.redstoneremote.network.PacketUpdateRemote
 import net.shadowfacts.redstoneremote.util.getDuration
 import net.shadowfacts.redstoneremote.util.getStrength
+import net.shadowfacts.redstoneremote.util.initDefaults
+import net.shadowfacts.redstoneremote.util.useSpecificSide
 import net.shadowfacts.shadowmc.item.ItemBase
 
 /**
@@ -42,7 +45,7 @@ class ItemRemote: ItemBase("remote") {
 				val pos = result.blockPos.offset(result.sideHit)
 				val state = world.getBlockState(pos)
 				if (state.block is BlockAir) {
-					BlockSignalProvider.create(world, pos, stack.getStrength(), stack.getDuration() * 20)
+					BlockSignalProvider.create(world, pos, stack.getStrength(), stack.getDuration() * 20, stack.useSpecificSide(), result.sideHit)
 				}
 			} else {
 				if (world.isRemote) {
@@ -61,6 +64,12 @@ class ItemRemote: ItemBase("remote") {
 			RedstoneRemote.network!!.sendToServer(PacketUpdateRemote(player, hand))
 		}
 		Minecraft.getMinecraft().displayGuiScreen(GUIRemote.create(stack, synchronizer))
+	}
+
+	override fun getSubItems(item: Item, tab: CreativeTabs?, subItems: MutableList<ItemStack>) {
+		val stack = ItemStack(this)
+		stack.initDefaults()
+		subItems.add(stack)
 	}
 
 }
