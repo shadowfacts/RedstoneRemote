@@ -31,7 +31,6 @@ import net.shadowfacts.shadowmc.item.ItemBase
 class ItemRemote: ItemBase("remote") {
 
 	init {
-		unlocalizedName = registryName.toString()
 		creativeTab = CreativeTabs.REDSTONE
 	}
 
@@ -68,10 +67,12 @@ class ItemRemote: ItemBase("remote") {
 		Minecraft.getMinecraft().displayGuiScreen(GUIRemote.create(player.getHeldItem(hand), synchronizer))
 	}
 
-	override fun getSubItems(item: Item, tab: CreativeTabs?, subItems: NonNullList<ItemStack>) {
-		val stack = ItemStack(this)
-		stack.initDefaults()
-		subItems.add(stack)
+	override fun getSubItems(tab: CreativeTabs, items: NonNullList<ItemStack>) {
+		if (tab == CreativeTabs.REDSTONE) {
+			val stack = ItemStack(this)
+			stack.initDefaults()
+			items.add(stack)
+		}
 	}
 
 }
